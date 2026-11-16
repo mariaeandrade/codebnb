@@ -1,0 +1,40 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model usuario {
+    id    Int    @id @default(autoincrement())
+    nome  String @unique @db.VarChar(100)
+    senha String @db.VarChar(100)
+}
+
+model clientes {
+    id        Int         @id @default(autoincrement())
+    nome      String      @db.VarChar(100)
+    cpf       String      @unique @db.VarChar(100)
+    imoveis imoveis[]
+}
+
+model imoveis {
+    id           Int         @id @default(autoincrement())
+    tipo         String      @db.VarChar(100)
+    dono         String      @db.VarChar(100)
+    clientes_id Int
+    clientes    clientes   @relation(fields: [clientes_id], references: [id])
+    endereco  String?     @db.VarChar(200)
+    avaliacao  Decimal @db.Decimal(2, 1) 
+    valor Decimal @db.Decimal(10, 2) 
+    alugueis    alugueis[]
+}
+
+model alugueis {
+    id           Int       @id @default(autoincrement())
+    data         DateTime  @db.Date
+    imoveis_id Int
+    imoveis    imoveis @relation(fields: [imoveis_id], references: [id])
+}
